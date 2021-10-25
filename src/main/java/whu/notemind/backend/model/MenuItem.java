@@ -38,4 +38,13 @@ public class MenuItem {
         this.name = name;
         this.isDirectory = isDirectory;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof MenuItem) {
+             MenuItem menuItem = (MenuItem) obj;
+             return name.equalsIgnoreCase(menuItem.getName().trim());
+         }
+         return false;
+    }
 }

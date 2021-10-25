@@ -1,30 +1,29 @@
 package whu.notemind.backend.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import whu.notemind.backend.model.MenuItem;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 
 @Service
 public class FileService {
 
+    public static String rootFilePath;
+
     public static String filepath;
 
     public static String trashFilePath;
 
-    @Value("${filepath}")
-    public void setFilepath(String filepath) {
-        FileService.filepath = filepath;
-    }
+    public static String recordPath;
 
-    @Value("${trashfilepath}")
-    public void setTrashFilepath(String trashFilepath) {
-        FileService.trashFilePath = trashFilepath;
+    public FileService() {
+        File rootfile=new File("");
+        rootFilePath =rootfile.getAbsolutePath();
+        filepath = rootFilePath + "/documents/";
+        trashFilePath = rootFilePath + "/trash/";
+        recordPath = rootFilePath + "/record.txt";
     }
 
     /**
@@ -125,10 +124,14 @@ public class FileService {
         File newFile = new File(trashFilePath + plusPath);
         if(oldFile.exists()){
             Files.copy(oldFile.toPath(), newFile.toPath());
-            System.out.println("文件移动成功！");
+            System.out.println("文件移动到trash成功！");
             return true;
         }
-        else{return false;}
+        else{
+            Files.copy(newFile.toPath(), oldFile.toPath());
+            System.out.println("文件移动到documents成功！");
+            return false;
+        }
     }
 
     /**
@@ -154,9 +157,66 @@ public class FileService {
             if(file.delete()){
                 System.out.println("文件删除成功");
             }
+            else if(file.isDirectory()) {
+                System.out.println("文件夹不为空，不可删除");
+            }
             else{
                 System.out.println("文件删除失败");
             }
         }
+    }
+
+    /**
+     * 使用 FileWriter 写文件
+     * @param filepath 文件目录
+     * @param content  待写入内容
+     * @throws IOException
+     */
+    public static void fileWriterMethod(String filepath, String content) throws IOException {
+        try (FileWriter fileWriter = new FileWriter(filepath, true)) {
+            fileWriter.append(content);
+        }
+    }
+
+
+    /**
+     * 记录最近点击文件
+     * @param fileName
+     * @return
+     */
+    public static void recordFile(String fileName) throws IOException {
+        String content = fileName + "\r\n";
+        fileWriterMethod(recordPath, content);
+        System.out.println("记录：" + content);
+    }
+
+    /**
+     * 读取最近点击文件
+     * @param
+     * @return
+     */
+    public static List<MenuItem> readFile(){
+        List<MenuItem> menuItems=new ArrayList<>();
+        try {
+            File file = new File(recordPath);
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            String strLine = null;
+            int lineCount = 1;
+            while(null != (strLine = bufferedReader.readLine())){
+                System.out.println("第[" + lineCount + "]行数据:[" + strLine + "]");
+                lineCount++;
+                File newFile = new File(filepath + "/" + strLine);
+                MenuItem menuItem=new MenuItem(newFile.getPath(),newFile.getName(),newFile.isDirectory());
+                System.out.println(menuItems.contains(menuItem));
+                if(menuItems.contains(menuItem)){
+                    menuItems.remove(menuItem);
+                    System.out.println("delete" + menuItem.getName());
+                }
+                menuItems.add(0,menuItem);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return menuItems;
     }
 }

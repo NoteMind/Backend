@@ -65,21 +65,54 @@ public class FileController {
     }
 
     /**
-     * 删除文件
+     * 删除/放回文件
      * @param plusFilePath
      * @return
      */
     @RequestMapping(
-            value = "deleteFile",
+            value = "backOrDeleteFile",
             method = RequestMethod.GET
     )
     @ResponseBody
-    public void deleteFile(@RequestParam(value = "plusFilePath", required = true) String plusFilePath,HttpServletResponse response) throws IOException {
+    public void backOrDeleteFile(@RequestParam(value = "plusFilePath", required = true) String plusFilePath,HttpServletResponse response) throws IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Method", "POST,GET");
         Boolean isExist = fileService.copyFile(plusFilePath);
         fileService.deleteFile(plusFilePath, isExist);
         return;
+    }
+
+    /**
+     * 更新最近文件
+     * @param fileName
+     * @return
+     */
+    @RequestMapping(
+            value = "recordFile",
+            method = RequestMethod.GET
+    )
+    @ResponseBody
+    public List<MenuItem> recordFile(@RequestParam(value = "fileName", required = true) String fileName,HttpServletResponse response) throws IOException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Method", "POST,GET");
+        fileService.recordFile(fileName);
+        return fileService.readFile();
+    }
+
+    /**
+     * 展现最近文件
+     * @param
+     * @return
+     */
+    @RequestMapping(
+            value = "showRecordFile",
+            method = RequestMethod.GET
+    )
+    @ResponseBody
+    public List<MenuItem> showRecordFile(HttpServletResponse response) throws IOException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Method", "POST,GET");
+        return fileService.readFile();
     }
 
     /**
