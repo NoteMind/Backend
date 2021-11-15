@@ -144,6 +144,8 @@ public class FileService {
             File file = new File(filepath + plusPath);
             if(file.delete()){
                 System.out.println("文件删除成功");
+                File recordfile = new File(recordPath);
+                recordfile.delete();
             }
             else if(file.isDirectory()) {
                 System.out.println("文件夹不为空，不可删除");
@@ -156,6 +158,8 @@ public class FileService {
             File file = new File(trashFilePath + plusPath);
             if(file.delete()){
                 System.out.println("文件删除成功");
+                File recordfile = new File(recordPath);
+                recordfile.delete();
             }
             else if(file.isDirectory()) {
                 System.out.println("文件夹不为空，不可删除");
