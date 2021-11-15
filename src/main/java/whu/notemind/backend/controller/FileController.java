@@ -116,17 +116,19 @@ public class FileController {
     }
 
     /**
-     * 上传文件
-     * @param id
+     * showMdFile
+     * @param fileName
      * @return
      */
     @RequestMapping(
-            value = "upload",
+            value = "showMdFile",
             method = RequestMethod.GET
     )
     @ResponseBody
-    public void uploadFile(@RequestParam(value = "id", required = true) String id) {
-
+    public String showMdFile(@RequestParam(value = "fileName", required = true) String fileName, HttpServletResponse response) throws IOException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Method", "POST,GET");
+        return fileService.showMdFile(fileName);
     }
 
 

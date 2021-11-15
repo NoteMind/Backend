@@ -219,4 +219,33 @@ public class FileService {
         }
         return menuItems;
     }
+
+    /**
+     * 读取文件
+     * @param fileName
+     * @return
+     */
+    public static String showMdFile(String fileName) throws IOException {
+        String content = "";
+        String path = filepath + fileName;
+        File file = new File(path);
+        Reader reader = null;
+        try {
+            reader = new InputStreamReader(new FileInputStream(file));
+            int tempchar;
+            while ((tempchar = reader.read()) != -1) {
+                // 对于windows下，\r\n这两个字符在一起时，表示一个换行。
+                // 但如果这两个字符分开显示时，会换两次行。
+                // 因此，屏蔽掉\r，或者屏蔽\n。否则，将会多出很多空行。
+                if (((char) tempchar) != '\r') {
+                    content += (char) tempchar;
+                }
+            }
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.print(content);
+        return content;
+    }
 }
