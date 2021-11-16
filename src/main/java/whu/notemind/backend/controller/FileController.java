@@ -133,17 +133,19 @@ public class FileController {
 
 
     /**
-     * 下载文件
-     * @param id
+     * 保存文件
+     * @param data
      * @return
      */
     @RequestMapping(
-            value = "download",
+            value = "saveFile",
             method = RequestMethod.GET
     )
     @ResponseBody
-    public void downloadFIle(@RequestParam(value = "id", required = true) String id) {
-
+    public void downloadFIle(@RequestParam(value = "data", required = true) String data, HttpServletResponse response) throws IOException {
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Method", "POST,GET");
+        fileService.saveFile(data);
     }
 
 

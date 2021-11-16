@@ -252,4 +252,19 @@ public class FileService {
         System.out.print(content);
         return content;
     }
+
+    /**
+     * 保存md文件
+     * @param data
+     * @return
+     */
+    public static void saveFile(String data) throws IOException {
+        Date date = new Date(System.currentTimeMillis());
+        String path = filepath + date.toString() + ".md";
+        File file = new File(path);
+        file.createNewFile();
+        FileWriter fileWriter = new FileWriter(file, true);
+        fileWriter.write(data);
+        fileWriter.close();
+    }
 }
